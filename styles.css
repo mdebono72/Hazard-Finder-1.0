@@ -1,0 +1,459 @@
+/* === Styles for Frontend === */
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    justify-content: center;
+    align-items: flex-start; /* Align to top to prevent vertical jumping */
+    background-color: white;
+    color: black;
+    padding: 3rem 1rem;
+    box-sizing: border-box;
+}
+
+.main-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.title-icon {
+    height: 1em;
+    width: auto;
+}
+
+/* Main Container */
+.image-loader-container {
+    min-width: 320px;
+    max-width: 960px; /* Add max-width for consistent layout */
+    width: 100%; /* Ensure it's responsive */
+    margin: 0 auto; /* Let body padding handle spacing */
+    text-align: center;
+    background-color: white;
+}
+
+/* Drop Zone Area */
+.drop-zone {
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+    padding: 1em;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    border: 4px dashed #cccccc;
+    border-radius: 16px;
+    cursor: pointer;
+}
+
+.drop-zone-elements {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.drop-zone .upload-icon {
+    width: 52px;
+    height: 52px;
+    stroke: #999999;
+}
+
+.drop-zone .upload-icon:hover, .drop-zone.drag-over .upload-icon {
+    border-color: #007bff;
+    stroke: #007bff;
+}
+
+.drop-zone-prompt {
+    font-size: 1rem;
+}
+
+.file-input {
+    display: none;
+}
+
+.image-preview {
+    display: none;
+    position: relative;
+    vertical-align: middle;
+    max-width: 100%;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block; /* Removes bottom space under image */
+}
+
+.file-details {
+    display: none;
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    max-width: calc(100% - 16px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.analysis-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1.5rem; /* Add space above the controls area */
+}
+
+.progress-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.progress-bar {
+    width: 100%;
+    max-width: 520px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    height: 20px;
+    overflow: hidden;
+}
+
+.progress-bar-filler {
+    height: 100%;
+    width: 0%;
+    background-color: #007bff;
+    border-radius: 5px;
+    /* Transition is now handled by animation classes for reliability */
+}
+
+.progress-bar-filler.is-animating {
+    transition: width 20s cubic-bezier(0.4, 0.2, 1);
+}
+
+.progress-bar-filler.is-completing {
+    transition: width 0.5s ease-out;
+}
+
+/* Animated stripes for indeterminate progress */
+.progress-bar-filler.indeterminate {
+    background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.15) 75%,
+        transparent 75%,
+        transparent
+    );
+    background-size: 40px 40px;
+    animation: progress-bar-stripes 1.5s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+    from {
+        background-position: 40px 0;
+    }
+    to {
+        background-position: 0 0;
+    }
+}
+
+.analysis-text {
+    margin: 0px;
+    font-size: 16px;
+    color: #6c757d;
+}
+
+/* Action Buttons */
+.action-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin: 5px;
+}
+
+#browseBtn {
+    background-color: #007bff;
+}
+
+#analyzeBtn {
+    background-color: #007bff;
+}
+
+#resetBtn {
+    background-color: #007bff;
+}
+
+#downloadExcelBtn {
+    background-color: #17a2b8;
+}
+
+#downloadPdfBtn {
+    background-color: #17a2b8;
+}
+
+/* Analysis Results */
+.analysis-result {
+    text-align: center;
+    padding-top: 20px;
+}
+
+.analysis-result h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+    text-align: left;
+}
+
+.analysis-result ul {
+    list-style-type: none;
+    padding: 0;
+    text-align: left;
+}
+
+.analysis-result li {
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.analysis-result li:last-child {
+    border-bottom: none;
+}
+
+.analysis-result li strong {
+    color: #007bff;
+}
+
+.analysis-result .result-actions {
+    margin-top: 20px;
+}
+
+/* --- STATE MANAGEMENT --- */
+/* Initial State: Show only the uploader */
+.initial-state .drop-zone {
+    display: flex;
+}
+.initial-state .image-preview,
+.initial-state .analysis-controls,
+.initial-state .analysis-result {
+    display: none;
+}
+
+/* Image Loaded: Show preview and analyze button */
+.image-loaded .drop-zone,
+.image-loaded .progress-container,
+.image-loaded .analysis-result {
+    display: none;
+}
+.image-loaded .image-preview {
+    display: inline-block;
+}
+.image-loaded .file-details {
+    display: block;
+}
+.image-loaded .analysis-controls,
+.image-loaded #analyzeBtn {
+    display: flex;
+}
+
+
+/* Analyzing: Show preview and progress bar */
+.analyzing .drop-zone,
+.analyzing #analyzeBtn {
+    display: none;
+}
+.analyzing .image-preview {
+    display: inline-block;
+}
+.analyzing .file-details {
+    display: block;
+}
+.analyzing .analysis-controls,
+.analyzing .progress-container {
+    display: flex;
+}
+
+/* Results Shown: Hide uploader/controls, show results */
+.results-shown .drop-zone,
+.results-shown .analysis-controls {
+    display: none;
+}
+.results-shown .analysis-result {
+    display: block;
+}
+
+/* --- NEW STYLES FOR VISUAL REPORT --- */
+.section-title {
+    max-width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    text-align: left;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.section-content {
+    max-width: 100%;
+    padding: 10px;
+    margin-bottom: 30px;
+    border-radius: 5px;
+    text-align: left;
+    white-space: pre-wrap; /* Respect newlines in the response */
+}
+
+.dark-box {
+    background-color: #343a40;
+    color: white;
+    border-radius: 5px;
+}
+
+.light-box {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+#image-container {
+    position: relative; /* Needed for markup boxes */
+    display: inline-block; /* Use inline-block to shrink-wrap the image */
+    max-width: 100%;
+    margin-bottom: 20px; /* Centering is handled by parent's text-align */
+}
+
+#image-display {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.markup-box {
+    position: absolute;
+    box-sizing: border-box;
+    border: 4px solid;
+    pointer-events: none;
+}
+
+.markup-box.high { border-color: #dc3545; }
+.markup-box.medium { border-color: #ffc107; }
+.markup-box.low { border-color: #17b833; }
+
+.markup-label {
+    position: absolute;
+    padding: 2px 6px;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    pointer-events: none;
+}
+
+.markup-label.high { background-color: #dc3545; }
+.markup-label.medium { background-color: #ffc107; }
+.markup-label.low { background-color: #17b833; }
+
+.hazard-card {
+    border-left: 5px solid;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background-color: #f8f9fa;
+    text-align: left;
+}
+
+.hazard-card strong { color: #1a2c4e; }
+.hazard-card.high { border-left-color: #dc3545; }
+.hazard-card.medium { border-left-color: #ffc107; }
+.hazard-card.low { border-left-color: #17b833; }
+.hazard-card.info { border-left-color: #6c757d; }
+
+
+
+
+
+/* === Styles for Backend === */
+textarea { 
+    width: 100%; 
+    min-height: 300px; 
+    padding: 10px; 
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+    font-family: monospace; 
+    font-size: 14px;
+}
+
+.param-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+    gap: 20px; 
+    margin: 20px 0;
+}
+
+.param-grid div { 
+    display: flex; 
+    flex-direction: column; 
+}
+
+.param-grid label { 
+    font-weight: bold; 
+    margin-bottom: 5px; 
+}
+
+.button-group { 
+    display: flex; 
+    gap: 10px; 
+    margin-top: 20px; 
+}
+
+.button-group button { 
+    flex-grow: 1; 
+}
+
+#saveButton { 
+    background-color: #dc3545; 
+}
+#saveButton:hover { 
+    background-color: #c82333; 
+}
+
+#resetButton { 
+    background-color: #6c757d; 
+}
+#resetButton:hover { 
+    background-color: #5a6268; 
+}
+
+#status { 
+    margin-top: 15px; 
+    font-weight: bold; 
+    padding: 10px; 
+    border-radius: 5px; 
+    display: none; 
+}
+
+#status.success { 
+    background-color: #d4edda; 
+    color: #155724; 
+}
+#status.error { 
+    background-color: #f8d7da; 
+    color: #721c24; 
+}

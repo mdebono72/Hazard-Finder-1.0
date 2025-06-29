@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hazard Finder</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles/styles.css">
+</head>
+
+<body>
+    <div class="image-loader-container" id="loaderContainer">
+	
+    <h1 class="main-title">
+        <img src="assets/favicon.svg" alt="" class="title-icon">
+        Hazard Finder
+        <img src="assets/favicon.svg" alt="" class="title-icon">
+    </h1>
+    
+        <div class="drop-zone" id="dropZone">
+            <div class="drop-zone-elements">
+                <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <p class="drop-zone-prompt">Drag & Drop your image here, or</p>
+                <button class="action-btn" id="browseBtn">Browse Files</button>
+			</div>
+        </div>
+        
+        <div class="image-preview" id="imagePreview">
+            <div class="file-details" id="fileDetails"></div>
+        </div>
+        
+        <input type="file" id="fileInput" class="file-input" accept="image/*">
+
+        <div class="analysis-controls" id="analysisControls">
+            <button class="action-btn" id="analyzeBtn">Analyze Image</button>
+            <!-- NEW: Wrapper for progress bar and text -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-bar-filler" id="progressBarFiller"></div>
+                </div>
+                <div class="analysis-text">Analyzing image... please wait.</div>
+            </div>
+        </div>
+
+        <div class="analysis-result" id="analysisResult">
+            <!-- Content injected by JS -->
+        </div>
+    </div>
+
+    <!-- 'defer' ensures the script runs after the HTML is fully loaded -->
+    <script src="script/frontend.js" defer></script>
+    <script src="script/analysis.js" defer></script>
+</body>
+</html>
