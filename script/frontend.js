@@ -1,4 +1,3 @@
-
 // --- Global Variables and Elements ---
 // This makes them accessible to the other scripts (analysis.js) by attaching them to the window object.
 window.currentFile = null;
