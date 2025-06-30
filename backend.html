@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hazard Finder Control Panel</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <!-- Links to the single, shared stylesheet -->
     <link rel="stylesheet" href="styles/styles.css">
 </head>
@@ -31,9 +32,9 @@
             </div>
         </div>
         
-        <div class="button-group">
-            <button id="resetButton" onclick="resetToDefaults()">Reset to Defaults</button>
-            <button id="saveButton" onclick="saveConfiguration()">Save Configuration to Server</button>
+	<div style="width: 100%; align-content: center; text-align: center;">
+            <button class="button-group" id="resetButton" onclick="resetToDefaults()">Reset to Defaults</button>
+            <button class="button-group" id="saveButton" onclick="saveConfiguration()">Save Configuration to Server</button>
         </div>
         <div id="status"></div>
     </div>
