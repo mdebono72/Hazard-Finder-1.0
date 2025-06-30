@@ -40,7 +40,6 @@ body {
 
 /* Drop Zone Area */
 .drop-zone {
-    display: flex;
     flex-direction: column;
     margin: 5px;
     padding: 1em;
@@ -89,6 +88,7 @@ body {
     max-height: 100%;
     object-fit: contain;
     display: block; /* Removes bottom space under image */
+    pointer-events: none;
 }
 
 .file-details {
@@ -251,18 +251,15 @@ body {
 /* --- STATE MANAGEMENT --- */
 /* Initial State: Show only the uploader */
 .initial-state .drop-zone {
-    display: flex;
+    display: inline-flex;
+    width: 50%;
 }
-.initial-state .image-preview,
-.initial-state .analysis-controls,
-.initial-state .analysis-result {
+.initial-state .image-preview, .initial-state .analysis-controls, .initial-state .analysis-result {
     display: none;
 }
 
 /* Image Loaded: Show preview and analyze button */
-.image-loaded .drop-zone,
-.image-loaded .progress-container,
-.image-loaded .analysis-result {
+.image-loaded .drop-zone, .image-loaded .progress-container, .image-loaded .analysis-result {
     display: none;
 }
 .image-loaded .image-preview {
@@ -271,15 +268,13 @@ body {
 .image-loaded .file-details {
     display: block;
 }
-.image-loaded .analysis-controls,
-.image-loaded #analyzeBtn {
+.image-loaded .analysis-controls, .image-loaded #analyzeBtn {
     display: flex;
 }
 
 
 /* Analyzing: Show preview and progress bar */
-.analyzing .drop-zone,
-.analyzing #analyzeBtn {
+.analyzing .drop-zone, .analyzing #analyzeBtn {
     display: none;
 }
 .analyzing .image-preview {
@@ -288,14 +283,12 @@ body {
 .analyzing .file-details {
     display: block;
 }
-.analyzing .analysis-controls,
-.analyzing .progress-container {
+.analyzing .analysis-controls, .analyzing .progress-container {
     display: flex;
 }
 
 /* Results Shown: Hide uploader/controls, show results */
-.results-shown .drop-zone,
-.results-shown .analysis-controls {
+.results-shown .drop-zone, .results-shown .analysis-controls {
     display: none;
 }
 .results-shown .analysis-result {
@@ -323,13 +316,13 @@ body {
 }
 
 .dark-box {
-    background-color: #343a40;
+    background-color: #808080;
     color: white;
     border-radius: 5px;
 }
 
 .light-box {
-    background-color: #f8f9fa;
+    background-color: #f0f0f0;
     border: 1px solid #dee2e6;
 }
 
@@ -344,6 +337,7 @@ body {
     max-width: 100%;
     height: auto;
     display: block;
+    pointer-events: none;
 }
 
 .markup-box {
@@ -375,7 +369,7 @@ body {
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 10px;
-    background-color: #f8f9fa;
+    background-color: #f0f0f0;
     text-align: left;
 }
 
@@ -417,14 +411,18 @@ textarea {
     margin-bottom: 5px; 
 }
 
-.button-group { 
-    display: flex; 
-    gap: 10px; 
-    margin-top: 20px; 
-}
-
-.button-group button { 
-    flex-grow: 1; 
+.button-group {
+    align-content: center;
+    text-align: center;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin: 5px;
 }
 
 #saveButton { 
