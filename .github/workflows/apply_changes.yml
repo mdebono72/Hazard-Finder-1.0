@@ -1,0 +1,72 @@
+name: Apply Code Changes from Comment
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  apply_changes:
+    # Only run this job if the comment was made by the repository owner and the comment body starts with '/apply-changes'
+    if: github.actor == github.repository_owner && startsWith(github.event.comment.body, '/apply-changes')
+    
+    runs-on: ubuntu-latest
+
+    # Grant permissions for the workflow to write to the repository
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Apply Changes from Comment
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          import os
+          import re
+
+          comment = os.environ['COMMENT_BODY']
+          
+          # Regex to find code blocks with file paths
+          # It looks for "--- START OF FILE path/to/file.ext ---"
+          pattern = re.compile(r'--- START OF FILE (.+?) ---\s*```[a-z]*\n(.*?)\n```', re.DOTALL)
+          
+          matches = pattern.findall(comment)
+          
+          if not matches:
+              print("No valid file blocks found to apply.")
+              exit(0)
+
+          for file_path, content in matches:
+              file_path = file_path.strip()
+              print(f"Applying changes to: {file_path}")
+              
+              # Ensure the directory exists
+              directory = os.path.dirname(file_path)
+              if directory:
+                  os.makedirs(directory, exist_ok=True)
+              
+              # Write the new content to the file
+              with open(file_path, 'w', encoding='utf-8') as f:
+                  f.write(content)
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'actions@github.com'
+          
+          # Check if there are any changes to commit
+          if git diff --exit-code; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          
+          git add .
+          git commit -m "Apply code changes from issue comment"
+          git push
