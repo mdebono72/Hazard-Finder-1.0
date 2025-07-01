@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const pbf = window.progressBarFiller;
 
         // Reset progress bar
-        pbf.classList.remove('is-animating', 'is-completing', 'indeterminate');
+        pbf.classList.remove('is-animating', 'is-completing');
         pbf.style.width = '0%';
         pbf.style.backgroundColor = '#007bff';
 
@@ -27,122 +27,134 @@ document.addEventListener('DOMContentLoaded', () => {
             if (simulatedProgress < 90) {
                 simulatedProgress += 1;
                 pbf.style.width = simulatedProgress + '%';
-            } else {
-                clearInterval(progressInterval);
-            }
-        }, 100); // Increase every 100ms
+            } 
+        }, 50);
 
-        const MAX_RETRIES = 3;
         let analysisSuccessful = false;
         let lastError = null;
+        const MAX_RETRIES = 3;
 
         for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
             try {
                 const formData = new FormData();
-                formData.append('image', window.currentFile);
+                formData.append('file', window.currentFile);
 
-                const response = await fetch(GOOGLE_BACKEND_URL, { method: 'POST', body: formData });
+                const response = await fetch(GOOGLE_BACKEND_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
                 const data = await response.json();
-                console.log(`Received data from backend (attempt ${attempt}):`, data);
 
-                if (!response.ok) {
-                    throw new Error(data.error || `Server Error ${response.status}`);
-                }
+                clearInterval(progressInterval);
+                pbf.classList.add('is-completing');
+                pbf.style.backgroundColor = '#28a745';
+                pbf.style.width = '100%';
 
-                let validationPassed = true;
-                if (data.hazards && data.hazards.length > 0) {
-                    for (const hazard of data.hazards) {
-                        if (hazard.markup) {
-                            const { top, left, width, height } = hazard.markup;
-                            const areNumbers = [top, left, width, height].every(v => typeof v === 'number' && !isNaN(v));
-                            if (!areNumbers || top < 0 || left < 0 || width <= 0 || height <= 0 || (top + height) > 100.1 || (left + width) > 100.1) {
-                                console.warn(`Validation failed on attempt ${attempt}: Invalid markup found.`, hazard.markup);
-                                lastError = new Error("The AI returned invalid markup coordinates.");
-                                validationPassed = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (validationPassed) {
-                    analysisSuccessful = true;
-
-                    clearInterval(progressInterval);
-                    pbf.style.width = '100%';
-                    pbf.classList.add('is-completing');
-                    await new Promise(resolve => setTimeout(resolve, 500));
+                setTimeout(() => {
                     pbf.classList.remove('is-completing');
+                }, 400);
 
-                    // Build the report
-                    let reportHTML = '';
-                    let imageHTML = '';
-                    imageHTML += `
-<div class="section-title dark-box">Analysis Results</div><br>
+                // Render result
+                let imageHTML = `
 <div id="image-container">
 <img id="image-display" src="${window.displayableImageSrc}">
 `;
 
-                    if (data.description) {
-                        reportHTML += `
+                if (data.markup && Array.isArray(data.markup)) {
+                    data.markup.forEach((box, idx) => {
+                        const risk = box.risk ? box.risk.toLowerCase() : 'info';
+                        imageHTML += `
+<div class="markup-box ${risk}" style="
+    left: ${box.left}%;
+    top: ${box.top}%;
+    width: ${box.width}%;
+    height: ${box.height}%;
+"></div>
+<div class="markup-label ${risk}" style="
+    left: ${box.left}%;
+    top: calc(${box.top}% - 20px);
+">
+    ${box.name || "Hazard"}
+</div>
+`;
+                    });
+                }
+
+                imageHTML += `</div>`;
+
+                let reportHTML = ``;
+
+                if (data.description) {
+                    reportHTML += `
 <div class="section-title dark-box">Workplace and Identified Activities</div>
 <div class="section-content light-box">${data.description}</div>
 `;
-                    }
+                }
 
-                    if (data.PPE) {
-                        reportHTML += `
+                if (data.PPE) {
+                    reportHTML += `
 <div class="section-title dark-box">PPE Assessment</div>
 <div class="section-content light-box">${data.PPE}</div>
 `;
-                    }
+                }
 
-                    reportHTML += `<div class="section-title dark-box">Identified Hazards</div>`;
+                reportHTML += `<div class="section-title dark-box">Identified Hazards</div>`;
 
-                    if (data.hazards && data.hazards.length > 0) {
-                        data.hazards.forEach((hazard, index) => {
-                            const riskValue = hazard.risk;
-                            const riskClass = (riskValue || 'info').toLowerCase();
-                            let riskColor;
-                            switch (riskValue) {
-                                case "High": riskColor = "#dc3545"; break;
-                                case "Medium": riskColor = "#ffc107"; break;
-                                case "Low": riskColor = "#17b833"; break;
-                                default: riskColor = "#000000";
-                            }
+                if (data.hazards && data.hazards.length > 0) {
+                    data.hazards.forEach((hazard, index) => {
+                        const riskValue = hazard.risk;
+                        const riskClass = (riskValue || 'info').toLowerCase();
+                        let riskColor;
+                        switch (riskValue) {
+                            case "High": riskColor = "#dc3545"; break;
+                            case "Medium": riskColor = "#ffc107"; break;
+                            case "Low": riskColor = "#17b833"; break;
+                            default: riskColor = "#17a2b8";
+                        }
+                        reportHTML += `
+<div class="hazard-card ${riskClass}">
+    <div class="hazard-title" style="color:${riskColor}">${hazard.name || "Hazard"}</div>
+    <div class="hazard-description">${hazard.description || ""}</div>
+    <div><strong>Risk:</strong> ${riskValue || "Info"}</div>
+</div>`;
+                    });
+                } else {
+                    reportHTML += `<div>No hazards identified.</div>`;
+                }
 
-                            reportHTML += `<div class="hazard-card ${riskClass}">` +
-                                `<strong>[${index + 1}] ${hazard.category}:</strong> ${hazard.observation}<br>` +
-                                `<strong>Risk Level: <span style="color:${riskColor};">${riskValue || 'N/A'}</span></strong>` +
-                                `</div>`;
-
-                            if (hazard.markup) {
-                                const { top, left, width, height } = hazard.markup;
-                                imageHTML += `
-<div class="markup-box ${riskClass}" style="top:${top}%; left:${left}%; width:${width}%; height:${height}%;"></div>
-<div class="markup-label ${riskClass}" style="top:${top}%; left:${left}%;">${index + 1}</div>
-`;
-                            }
-                        });
-                    } else {
-                        reportHTML += `<p>No specific hazards were identified in this image.</p>`;
-                    }
-
-                    imageHTML += `</div>`;
-                    const resetButtonHTML = `
-<div class="result-actions">
+                // Download buttons (Excel/PDF)
+                reportHTML += `<div class="result-actions">
+<button class="action-btn" id="downloadExcelBtn">Download Excel</button>
+<button class="action-btn" id="downloadPdfBtn">Download PDF</button>
 <button class="action-btn" id="resetBtn">Analyze Another Image</button>
 </div>
 `;
 
-                    window.analysisResult.innerHTML = imageHTML + reportHTML + resetButtonHTML;
-                    document.getElementById('resetBtn').addEventListener('click', window.resetToInitialState);
-                    window.setState('results-shown');
-                    break;
-                } else {
-                    console.log(`Retrying analysis (attempt ${attempt + 1} of ${MAX_RETRIES})...`);
+                window.analysisResult.innerHTML = imageHTML + reportHTML;
+                document.getElementById('resetBtn').addEventListener('click', window.resetToInitialState);
+
+                // Attach download event listeners if implemented
+                const downloadExcelBtn = document.getElementById('downloadExcelBtn');
+                const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+                if (downloadExcelBtn) {
+                    downloadExcelBtn.addEventListener('click', () => {
+                        // Insert your Excel download logic here
+                        alert("Excel download not implemented in this sample.");
+                    });
+                }
+                if (downloadPdfBtn) {
+                    downloadPdfBtn.addEventListener('click', () => {
+                        // Insert your PDF download logic here
+                        alert("PDF download not implemented in this sample.");
+                    });
                 }
 
+                window.setState('results-shown');
+                analysisSuccessful = true;
+                break;
             } catch (error) {
                 console.error("A non-recoverable error occurred during analysis:", error);
                 lastError = error;
@@ -157,14 +169,11 @@ document.addEventListener('DOMContentLoaded', () => {
             pbf.style.width = '100%';
             await new Promise(resolve => setTimeout(resolve, 400));
             pbf.classList.remove('is-completing');
-
-            const finalErrorMessage = (lastError && lastError.message.includes("Server Error"))
-                ? lastError.message
-                : "The analysis could not be completed because the AI returned inconsistent data after multiple attempts. Please try again.";
-
-            window.analysisResult.innerHTML = `<h3 style="color:red;">Error</h3><p>${finalErrorMessage}</p><div class="result-actions"><button class="action-btn" id="resetBtn">Try Again</button></div>`;
-            document.getElementById('resetBtn').addEventListener('click', window.resetToInitialState);
-            window.setState('results-shown');
+            alert(
+                "There was an error analyzing the image." +
+                (lastError ? `\n\nDetails: ${lastError.message || lastError}` : "")
+            );
+            window.setState('image-loaded');
         }
     });
 });
