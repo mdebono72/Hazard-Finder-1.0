@@ -272,7 +272,6 @@ body {
     display: flex;
 }
 
-
 /* Analyzing: Show preview and progress bar */
 .analyzing .drop-zone, .analyzing #analyzeBtn {
     display: none;
@@ -379,10 +378,6 @@ body {
 .hazard-card.low { border-left-color: #17b833; }
 .hazard-card.info { border-left-color: #6c757d; }
 
-
-
-
-
 /* === Styles for Backend === */
 textarea { 
     width: 100%; 
@@ -409,49 +404,4 @@ textarea {
 .param-grid label { 
     font-weight: bold; 
     margin-bottom: 5px; 
-}
-
-.button-group {
-    align-content: center;
-    text-align: center;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    margin: 5px;
-}
-
-#saveButton { 
-    background-color: #dc3545; 
-}
-#saveButton:hover { 
-    background-color: #c82333; 
-}
-
-#resetButton { 
-    background-color: #6c757d; 
-}
-#resetButton:hover { 
-    background-color: #5a6268; 
-}
-
-#status { 
-    margin-top: 15px; 
-    font-weight: bold; 
-    padding: 10px; 
-    border-radius: 5px; 
-    display: none; 
-}
-
-#status.success { 
-    background-color: #d4edda; 
-    color: #155724; 
-}
-#status.error { 
-    background-color: #f8d7da; 
-    color: #721c24; 
 }
