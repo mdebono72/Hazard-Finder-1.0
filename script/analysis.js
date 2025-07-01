@@ -21,10 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.setState('analyzing');
 
-        // Simulate progress from 0% to 90%
+        // Simulate progress from 0% to 80%
         let simulatedProgress = 0;
         const progressInterval = setInterval(() => {
-            if (simulatedProgress < 90) {
+            if (simulatedProgress < 80) {
                 simulatedProgress += 1;
                 pbf.style.width = simulatedProgress + '%';
             } 
